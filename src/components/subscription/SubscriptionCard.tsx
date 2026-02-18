@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Check, Star } from 'lucide-react';
 import { SubscriptionPlan } from '@/lib/subscription';
 import { formatPrice } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n/LanguageContext';
 
 interface SubscriptionCardProps {
   plan: SubscriptionPlan;
@@ -12,6 +13,8 @@ interface SubscriptionCardProps {
 }
 
 export default function SubscriptionCard({ plan, onSelect, isRecommended }: SubscriptionCardProps) {
+  const { t } = useTranslation();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -26,7 +29,7 @@ export default function SubscriptionCard({ plan, onSelect, isRecommended }: Subs
       {/* Popular badge */}
       {plan.popular && (
         <div className="absolute -right-8 top-6 rotate-45 bg-[#1A3C8B] px-10 py-1 text-xs font-bold text-white">
-          Most Popular
+          {t('subscription.card.mostPopular')}
         </div>
       )}
 
@@ -34,7 +37,7 @@ export default function SubscriptionCard({ plan, onSelect, isRecommended }: Subs
       {isRecommended && !plan.popular && (
         <div className="mb-3 inline-flex items-center gap-1 rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
           <Star className="h-3 w-3" />
-          Recommended for you
+          {t('subscription.card.recommended')}
         </div>
       )}
 
@@ -43,7 +46,7 @@ export default function SubscriptionCard({ plan, onSelect, isRecommended }: Subs
         <h3 className="text-xl font-bold text-gray-900">{plan.name}</h3>
         <div className="mt-2 flex items-baseline gap-1">
           <span className="text-3xl font-bold text-[#1A3C8B]">{formatPrice(plan.price)}</span>
-          <span className="text-gray-500">/month</span>
+          <span className="text-gray-500">{t('subscription.card.perMonth')}</span>
         </div>
         {plan.savings && (
           <p className="mt-1 text-sm text-green-600">{plan.savings}</p>
@@ -54,13 +57,13 @@ export default function SubscriptionCard({ plan, onSelect, isRecommended }: Subs
       <div className="mb-4 rounded-xl bg-gray-50 p-3">
         <p className="text-sm font-medium text-gray-700">
           {plan.drinks === 'unlimited' ? (
-            <span className="text-[#1A3C8B]">Unlimited drinks</span>
+            <span className="text-[#1A3C8B]">{t('subscription.card.unlimited')}</span>
           ) : (
-            <span><span className="text-[#1A3C8B]">{plan.drinks}</span> drinks/month</span>
+            <span><span className="text-[#1A3C8B]">{plan.drinks}</span> {t('subscription.card.drinksMonth').replace('{count}', '').trim()}</span>
           )}
         </p>
         <p className="mt-1 text-xs text-gray-500">
-          Includes: {plan.includes.join(', ')}
+          {t('subscription.card.includes')} {plan.includes.join(', ')}
         </p>
       </div>
 
@@ -83,7 +86,7 @@ export default function SubscriptionCard({ plan, onSelect, isRecommended }: Subs
             : 'border-2 border-[#1A3C8B] text-[#1A3C8B] hover:bg-[#1A3C8B]/5'
         }`}
       >
-        Subscribe to {plan.name}
+        {t('subscription.card.subscribe').replace('{plan}', plan.name)}
       </button>
     </motion.div>
   );

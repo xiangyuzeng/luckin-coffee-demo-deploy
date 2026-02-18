@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { Leaf, TreePine, Car } from 'lucide-react';
 import { OrderCarbonImpact, formatCO2 } from '@/lib/sustainability';
+import { useTranslation } from '@/lib/i18n/LanguageContext';
 
 interface CarbonBadgeProps {
   impact: OrderCarbonImpact;
@@ -10,6 +11,8 @@ interface CarbonBadgeProps {
 }
 
 export default function CarbonBadge({ impact, compact = false }: CarbonBadgeProps) {
+  const { t } = useTranslation();
+
   if (impact.totalSaved === 0) return null;
 
   if (compact) {
@@ -36,8 +39,8 @@ export default function CarbonBadge({ impact, compact = false }: CarbonBadgeProp
           <Leaf className="h-4 w-4 text-white" />
         </div>
         <div>
-          <p className="text-sm font-medium text-green-800">Eco-Friendly Order!</p>
-          <p className="text-xs text-green-600">You&apos;re making a difference</p>
+          <p className="text-sm font-medium text-green-800">{t('sustainability.ecoFriendly')}</p>
+          <p className="text-xs text-green-600">{t('sustainability.makingDifference')}</p>
         </div>
       </div>
 
@@ -53,7 +56,7 @@ export default function CarbonBadge({ impact, compact = false }: CarbonBadgeProp
 
       {/* Total */}
       <div className="mb-3 flex items-center justify-between rounded-lg bg-green-100 p-2">
-        <span className="text-sm font-medium text-green-800">Total CO₂ saved</span>
+        <span className="text-sm font-medium text-green-800">{t('sustainability.totalSaved')}</span>
         <span className="text-lg font-bold text-green-700">{formatCO2(impact.totalSaved)}</span>
       </div>
 
@@ -62,16 +65,16 @@ export default function CarbonBadge({ impact, compact = false }: CarbonBadgeProp
         <div className="rounded-lg bg-white/50 p-2">
           <TreePine className="mx-auto mb-1 h-4 w-4 text-green-600" />
           <p className="text-xs text-green-700">
-            <span className="font-medium">{impact.treesEquivalent.toFixed(1)}</span> days of
+            <span className="font-medium">{impact.treesEquivalent.toFixed(1)}</span> {t('sustainability.daysOf')}
           </p>
-          <p className="text-[10px] text-green-600">tree absorption</p>
+          <p className="text-[10px] text-green-600">{t('sustainability.treeAbsorption')}</p>
         </div>
         <div className="rounded-lg bg-white/50 p-2">
           <Car className="mx-auto mb-1 h-4 w-4 text-green-600" />
           <p className="text-xs text-green-700">
-            <span className="font-medium">{impact.milesEquivalent.toFixed(1)}</span> miles
+            <span className="font-medium">{impact.milesEquivalent.toFixed(1)}</span> {t('sustainability.miles')}
           </p>
-          <p className="text-[10px] text-green-600">not driven</p>
+          <p className="text-[10px] text-green-600">{t('sustainability.notDriven')}</p>
         </div>
       </div>
     </motion.div>

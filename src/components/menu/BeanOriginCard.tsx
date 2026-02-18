@@ -3,12 +3,15 @@
 import { motion } from 'framer-motion';
 import { MapPin, Mountain, Droplets, Flame, Award, Leaf } from 'lucide-react';
 import { BeanOrigin, getCountryFlag } from '@/lib/fake-data/bean-origins';
+import { useTranslation } from '@/lib/i18n/LanguageContext';
 
 interface BeanOriginCardProps {
   origin: BeanOrigin;
 }
 
 export default function BeanOriginCard({ origin }: BeanOriginCardProps) {
+  const { t } = useTranslation();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -32,28 +35,28 @@ export default function BeanOriginCard({ origin }: BeanOriginCardProps) {
         <div className="flex items-center gap-2 rounded-lg bg-gray-50 p-3">
           <Mountain className="h-4 w-4 text-gray-500" />
           <div>
-            <p className="text-xs text-gray-500">Altitude</p>
+            <p className="text-xs text-gray-500">{t('beanOrigin.altitude')}</p>
             <p className="text-sm font-medium">{origin.altitude}</p>
           </div>
         </div>
         <div className="flex items-center gap-2 rounded-lg bg-gray-50 p-3">
           <Droplets className="h-4 w-4 text-gray-500" />
           <div>
-            <p className="text-xs text-gray-500">Process</p>
+            <p className="text-xs text-gray-500">{t('beanOrigin.process')}</p>
             <p className="text-sm font-medium">{origin.process}</p>
           </div>
         </div>
         <div className="flex items-center gap-2 rounded-lg bg-gray-50 p-3">
           <Flame className="h-4 w-4 text-gray-500" />
           <div>
-            <p className="text-xs text-gray-500">Roast</p>
+            <p className="text-xs text-gray-500">{t('beanOrigin.roast')}</p>
             <p className="text-sm font-medium">{origin.roastProfile}</p>
           </div>
         </div>
         <div className="flex items-center gap-2 rounded-lg bg-gray-50 p-3">
           <MapPin className="h-4 w-4 text-gray-500" />
           <div>
-            <p className="text-xs text-gray-500">Region</p>
+            <p className="text-xs text-gray-500">{t('beanOrigin.region')}</p>
             <p className="text-sm font-medium">{origin.region}</p>
           </div>
         </div>
@@ -61,7 +64,7 @@ export default function BeanOriginCard({ origin }: BeanOriginCardProps) {
 
       {/* Tasting notes */}
       <div>
-        <h5 className="mb-2 text-sm font-medium text-gray-700">Tasting Notes</h5>
+        <h5 className="mb-2 text-sm font-medium text-gray-700">{t('beanOrigin.tastingNotes')}</h5>
         <div className="flex flex-wrap gap-2">
           {origin.tastingNotes.map((note, index) => (
             <span
@@ -77,7 +80,7 @@ export default function BeanOriginCard({ origin }: BeanOriginCardProps) {
       {/* Certifications */}
       {origin.certifications.length > 0 && (
         <div>
-          <h5 className="mb-2 text-sm font-medium text-gray-700">Certifications</h5>
+          <h5 className="mb-2 text-sm font-medium text-gray-700">{t('beanOrigin.certifications')}</h5>
           <div className="flex flex-wrap gap-2">
             {origin.certifications.map((cert, index) => (
               <span
@@ -98,7 +101,7 @@ export default function BeanOriginCard({ origin }: BeanOriginCardProps) {
 
       {/* Story */}
       <div className="rounded-xl border border-amber-200 bg-amber-50/50 p-4">
-        <h5 className="mb-2 text-sm font-medium text-amber-900">The Story</h5>
+        <h5 className="mb-2 text-sm font-medium text-amber-900">{t('beanOrigin.story')}</h5>
         <p className="text-sm leading-relaxed text-amber-800">{origin.story}</p>
       </div>
     </motion.div>

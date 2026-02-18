@@ -7,15 +7,31 @@ import { Coffee, Gift, Zap, Crown } from 'lucide-react';
 import { SUBSCRIPTION_PLANS, SubscriptionPlan } from '@/lib/subscription';
 import SubscriptionCard from '@/components/subscription/SubscriptionCard';
 import SavingsCalculator from '@/components/subscription/SavingsCalculator';
+import { useTranslation } from '@/lib/i18n/LanguageContext';
 
 export default function SubscriptionPage() {
   const [recommendedPlan, setRecommendedPlan] = useState<SubscriptionPlan | null>(null);
+  const { t } = useTranslation();
 
   const handleSelectPlan = (plan: SubscriptionPlan) => {
-    toast.success(`You selected ${plan.name} Pass! This is a demo - subscription would be processed here.`, {
+    toast.success(t('subscription.selected').replace('{plan}', plan.name), {
       duration: 4000,
     });
   };
+
+  const benefits = [
+    { icon: Coffee, labelKey: 'subscription.benefits.unlimitedDrinks', descKey: 'subscription.benefits.premiumPlans' },
+    { icon: Zap, labelKey: 'subscription.benefits.skipLine', descKey: 'subscription.benefits.priorityPickup' },
+    { icon: Gift, labelKey: 'subscription.benefits.freeUpgrades', descKey: 'subscription.benefits.sizeMilk' },
+    { icon: Crown, labelKey: 'subscription.benefits.vipAccess', descKey: 'subscription.benefits.eliteMembers' },
+  ];
+
+  const faqs = [
+    { qKey: 'subscription.faq.cancelQ', aKey: 'subscription.faq.cancelA' },
+    { qKey: 'subscription.faq.rolloverQ', aKey: 'subscription.faq.rolloverA' },
+    { qKey: 'subscription.faq.shareQ', aKey: 'subscription.faq.shareA' },
+    { qKey: 'subscription.faq.drinksQ', aKey: 'subscription.faq.drinksA' },
+  ];
 
   return (
     <div className="w-full pb-20">
@@ -28,9 +44,9 @@ export default function SubscriptionPage() {
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#1A3C8B]/10">
           <Crown className="h-8 w-8 text-[#1A3C8B]" />
         </div>
-        <h1 className="text-3xl font-bold text-gray-900">Luckin Pass</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('subscription.title')}</h1>
         <p className="mt-2 text-gray-500">
-          Unlimited coffee, unlimited savings. Choose your perfect plan.
+          {t('subscription.subtitle')}
         </p>
       </motion.div>
 
@@ -41,19 +57,14 @@ export default function SubscriptionPage() {
         transition={{ delay: 0.1 }}
         className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4"
       >
-        {[
-          { icon: Coffee, label: 'Unlimited Drinks', desc: 'Premium plans' },
-          { icon: Zap, label: 'Skip the Line', desc: 'Priority pickup' },
-          { icon: Gift, label: 'Free Upgrades', desc: 'Size & milk' },
-          { icon: Crown, label: 'VIP Access', desc: 'Elite members' },
-        ].map((benefit, index) => (
+        {benefits.map((benefit, index) => (
           <div
             key={index}
             className="flex flex-col items-center rounded-xl bg-gray-50 p-4 text-center"
           >
             <benefit.icon className="mb-2 h-6 w-6 text-[#1A3C8B]" />
-            <p className="text-sm font-medium">{benefit.label}</p>
-            <p className="text-xs text-gray-500">{benefit.desc}</p>
+            <p className="text-sm font-medium">{t(benefit.labelKey)}</p>
+            <p className="text-xs text-gray-500">{t(benefit.descKey)}</p>
           </div>
         ))}
       </motion.div>
@@ -74,7 +85,7 @@ export default function SubscriptionPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
       >
-        <h2 className="mb-6 text-center text-xl font-bold">Choose Your Plan</h2>
+        <h2 className="mb-6 text-center text-xl font-bold">{t('subscription.choosePlan')}</h2>
         <div className="grid gap-6 md:grid-cols-3">
           {SUBSCRIPTION_PLANS.map((plan) => (
             <SubscriptionCard
@@ -94,29 +105,12 @@ export default function SubscriptionPage() {
         transition={{ delay: 0.4 }}
         className="mt-12"
       >
-        <h2 className="mb-6 text-center text-xl font-bold">Frequently Asked Questions</h2>
+        <h2 className="mb-6 text-center text-xl font-bold">{t('subscription.faq')}</h2>
         <div className="space-y-4">
-          {[
-            {
-              q: 'Can I cancel anytime?',
-              a: 'Yes! You can cancel your subscription at any time. Your benefits will continue until the end of your billing period.',
-            },
-            {
-              q: 'Do unused drinks roll over?',
-              a: 'For the Basic plan, unused drinks do not roll over. Premium and Elite plans have unlimited drinks, so there\'s nothing to roll over!',
-            },
-            {
-              q: 'Can I share my subscription?',
-              a: 'Subscriptions are tied to your account and cannot be shared. However, you can gift drinks to friends through the app!',
-            },
-            {
-              q: 'What drinks are included?',
-              a: 'Basic includes drip coffee, cold brew, and americano. Premium and Elite include all drinks on our menu.',
-            },
-          ].map((faq, index) => (
+          {faqs.map((faq, index) => (
             <div key={index} className="rounded-xl border border-gray-200 p-4">
-              <h3 className="font-medium text-gray-900">{faq.q}</h3>
-              <p className="mt-1 text-sm text-gray-500">{faq.a}</p>
+              <h3 className="font-medium text-gray-900">{t(faq.qKey)}</h3>
+              <p className="mt-1 text-sm text-gray-500">{t(faq.aKey)}</p>
             </div>
           ))}
         </div>
@@ -125,8 +119,7 @@ export default function SubscriptionPage() {
       {/* Demo Notice */}
       <div className="mt-8 rounded-xl bg-yellow-50 p-4 text-center">
         <p className="text-sm text-yellow-800">
-          <strong>Demo Mode:</strong> This is a demonstration of the subscription feature.
-          No actual charges will be made.
+          <strong>{t('subscription.demoMode')}</strong> {t('subscription.demoNotice')}
         </p>
       </div>
     </div>

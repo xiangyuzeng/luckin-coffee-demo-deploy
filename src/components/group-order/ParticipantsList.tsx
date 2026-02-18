@@ -5,6 +5,7 @@ import { User, Crown, Coffee } from 'lucide-react';
 import { GroupOrderParticipant } from '@/lib/group-order-store';
 import { formatPrice } from '@/lib/utils';
 import { calculateItemPrice, type MilkType, type DrinkSize } from '@/lib/price-modifiers';
+import { useTranslation } from '@/lib/i18n/LanguageContext';
 
 interface ParticipantsListProps {
   participants: GroupOrderParticipant[];
@@ -12,6 +13,8 @@ interface ParticipantsListProps {
 }
 
 export default function ParticipantsList({ participants, currentParticipantId }: ParticipantsListProps) {
+  const { t } = useTranslation();
+
   const getParticipantTotal = (participant: GroupOrderParticipant): number => {
     return participant.items.reduce((total, item) => {
       const price = calculateItemPrice(
@@ -33,11 +36,11 @@ export default function ParticipantsList({ participants, currentParticipantId }:
       <div className="flex items-center justify-between rounded-xl bg-[#1A3C8B]/5 p-4">
         <div className="flex items-center gap-2">
           <User className="h-5 w-5 text-[#1A3C8B]" />
-          <span className="font-medium">{participants.length} people</span>
+          <span className="font-medium">{t('groupOrder.people').replace('{count}', participants.length.toString())}</span>
         </div>
         <div className="flex items-center gap-2">
           <Coffee className="h-5 w-5 text-[#1A3C8B]" />
-          <span className="font-medium">{totalItems} items</span>
+          <span className="font-medium">{t('groupOrder.items').replace('{count}', totalItems.toString())}</span>
         </div>
         <div className="font-bold text-[#1A3C8B]">{formatPrice(grandTotal)}</div>
       </div>
@@ -72,11 +75,11 @@ export default function ParticipantsList({ participants, currentParticipantId }:
                   <p className="font-medium">
                     {participant.name}
                     {participant.id === currentParticipantId && (
-                      <span className="ml-2 text-xs text-gray-500">(You)</span>
+                      <span className="ml-2 text-xs text-gray-500">{t('groupOrder.you')}</span>
                     )}
                   </p>
                   {participant.isHost && (
-                    <p className="text-xs text-[#1A3C8B]">Host</p>
+                    <p className="text-xs text-[#1A3C8B]">{t('groupOrder.host')}</p>
                   )}
                 </div>
               </div>
@@ -114,7 +117,7 @@ export default function ParticipantsList({ participants, currentParticipantId }:
                 ))}
               </div>
             ) : (
-              <p className="text-center text-sm text-gray-400">No items yet</p>
+              <p className="text-center text-sm text-gray-400">{t('groupOrder.noItemsYet')}</p>
             )}
           </motion.div>
         ))}

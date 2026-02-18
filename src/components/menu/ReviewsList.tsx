@@ -5,6 +5,7 @@ import { ThumbsUp, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { Review, formatReviewDate } from '@/lib/fake-data/reviews';
 import StarRating from './StarRating';
+import { useTranslation } from '@/lib/i18n/LanguageContext';
 
 interface ReviewsListProps {
   reviews: Review[];
@@ -12,23 +13,25 @@ interface ReviewsListProps {
 }
 
 export default function ReviewsList({ reviews, drinkName }: ReviewsListProps) {
+  const { t } = useTranslation();
+
   const handleHelpful = (reviewId: string) => {
-    toast.success('Thanks for your feedback!');
+    toast.success(t('reviews.thanksFeedback'));
   };
 
   const handleWriteReview = () => {
-    toast.success('Demo: Review submission would open here');
+    toast.success(t('reviews.demoSubmit'));
   };
 
   if (reviews.length === 0) {
     return (
       <div className="py-8 text-center">
-        <p className="text-gray-500">No reviews yet</p>
+        <p className="text-gray-500">{t('reviews.noReviews')}</p>
         <button
           onClick={handleWriteReview}
           className="mt-4 rounded-full bg-[#1A3C8B] px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-[#2D5BB9]"
         >
-          Be the first to review
+          {t('reviews.beFirst')}
         </button>
       </div>
     );
@@ -41,7 +44,7 @@ export default function ReviewsList({ reviews, drinkName }: ReviewsListProps) {
         onClick={handleWriteReview}
         className="w-full rounded-xl border-2 border-dashed border-gray-300 py-3 text-sm font-medium text-gray-500 transition-colors hover:border-[#1A3C8B] hover:text-[#1A3C8B]"
       >
-        + Write a Review
+        {t('reviews.writeReview')}
       </button>
 
       {/* Reviews list */}
@@ -61,7 +64,7 @@ export default function ReviewsList({ reviews, drinkName }: ReviewsListProps) {
                 {review.verified && (
                   <span className="flex items-center gap-0.5 text-xs text-green-600">
                     <CheckCircle className="h-3 w-3" />
-                    Verified
+                    {t('reviews.verified')}
                   </span>
                 )}
               </div>
@@ -80,7 +83,7 @@ export default function ReviewsList({ reviews, drinkName }: ReviewsListProps) {
               className="flex items-center gap-1 rounded-full border border-gray-200 px-3 py-1 text-xs text-gray-500 transition-colors hover:border-[#1A3C8B] hover:text-[#1A3C8B]"
             >
               <ThumbsUp className="h-3 w-3" />
-              Helpful ({review.helpful})
+              {t('reviews.helpful').replace('{count}', review.helpful.toString())}
             </button>
           </div>
         </motion.div>

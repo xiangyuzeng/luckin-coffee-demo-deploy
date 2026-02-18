@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useSession } from 'next-auth/react';
 import { useTranslation } from '@/lib/i18n/LanguageContext';
-import { Send, Sparkles, Zap } from 'lucide-react';
+import { Send, Sparkles, Zap, Bot, X } from 'lucide-react';
 import { detectIntent, generateResponse, ChatMessage, ChatContext, getQuizQuestion } from '@/lib/chat-engine';
 import { parseNaturalLanguage, matchDrinksToQuery, QuizAnswers, getQuizRecommendations } from '@/lib/drink-attributes';
 import { ExtendedMenu } from '@/types/menu';
@@ -23,6 +23,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
   const [context, setContext] = useState<ChatContext>({ locale });
   const [menus, setMenus] = useState<ExtendedMenu[]>([]);
   const [quiz, setQuiz] = useState<QuizState>({ active: false, step: 0, answers: {} });
+  const [isTyping, setIsTyping] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -61,15 +62,19 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
   }, [session, locale]);
 
   const addAssistantMessage = (content: string, suggestions?: string[], recommendations?: ChatMessage['recommendations']) => {
-    const msg: ChatMessage = {
-      id: (Date.now() + 1).toString(),
-      role: 'assistant',
-      content,
-      timestamp: new Date(),
-      suggestions,
-      recommendations,
-    };
-    setMessages(prev => [...prev, msg]);
+    setIsTyping(true);
+    setTimeout(() => {
+      const msg: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content,
+        timestamp: new Date(),
+        suggestions,
+        recommendations,
+      };
+      setMessages(prev => [...prev, msg]);
+      setIsTyping(false);
+    }, 500);
   };
 
   const handleQuizAnswer = (answer: string) => {
@@ -227,18 +232,36 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
       transition={{ duration: 0.2 }}
       className="fixed bottom-36 right-4 z-40 flex h-[28rem] w-[22rem] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl md:bottom-22"
     >
-      {/* Header */}
-      <div className="flex items-center gap-3 bg-gradient-to-r from-[#1A3C8B] to-[#2D5BB9] px-4 py-3 text-white shadow-md">
-        <div className="relative flex h-8 w-8 items-center justify-center rounded-full bg-white/20">
-          <Sparkles className="h-4 w-4" />
-          <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-green-400" />
+      {/* Enhanced Header */}
+      <div className="relative flex items-center gap-3 px-4 py-3 text-white shadow-lg"
+        style={{
+          background: 'linear-gradient(135deg, #1A3C8B 0%, #6366F1 100%)',
+        }}
+      >
+        {/* Sparkle decorations */}
+        <div className="absolute right-12 top-2 opacity-30">
+          <Sparkles className="h-3 w-3" />
+        </div>
+        <div className="absolute right-20 top-4 opacity-20">
+          <Sparkles className="h-2 w-2" />
+        </div>
+
+        <div className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
+          <Bot className="h-5 w-5" />
+          <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white bg-green-400" />
         </div>
         <div className="flex-1">
-          <p className="text-sm font-medium">{t('chat.title')}</p>
-          <p className="text-xs opacity-70">{t('chat.subtitle')}</p>
+          <p className="text-sm font-semibold">{locale === 'zh' ? t('chat.aiAssistant') : t('chat.aiBarista')}</p>
+          <p className="flex items-center gap-1 text-xs opacity-80">
+            <Sparkles className="h-3 w-3" />
+            {t('chat.poweredByAI')}
+          </p>
         </div>
-        <button onClick={onClose} className="rounded-full p-1 hover:bg-white/20">
-          <span className="text-xs">✕</span>
+        <button
+          onClick={onClose}
+          className="rounded-full p-1.5 transition-colors hover:bg-white/20"
+        >
+          <X className="h-4 w-4" />
         </button>
       </div>
 
@@ -277,6 +300,28 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
             </div>
           </div>
         ))}
+        {/* Typing indicator */}
+        {isTyping && (
+          <div className="flex justify-start">
+            <div className="flex items-center gap-1 rounded-2xl rounded-bl-md bg-gray-100 px-4 py-3">
+              <motion.span
+                className="h-2 w-2 rounded-full bg-gray-400"
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 0.6, repeat: Infinity, delay: 0 }}
+              />
+              <motion.span
+                className="h-2 w-2 rounded-full bg-gray-400"
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }}
+              />
+              <motion.span
+                className="h-2 w-2 rounded-full bg-gray-400"
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }}
+              />
+            </div>
+          </div>
+        )}
         {/* Quick reply suggestions */}
         {messages.length > 0 && messages[messages.length - 1].suggestions && (
           <div className="flex flex-wrap gap-1.5 pt-1">

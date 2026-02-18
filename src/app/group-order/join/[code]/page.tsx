@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { Users, Coffee } from 'lucide-react';
 import { useGroupOrderStore } from '@/lib/group-order-store';
+import { useTranslation } from '@/lib/i18n/LanguageContext';
 
 export default function JoinGroupOrderPage() {
   const params = useParams();
@@ -13,6 +14,7 @@ export default function JoinGroupOrderPage() {
   const code = params.code as string;
   const [name, setName] = useState('');
   const [mounted, setMounted] = useState(false);
+  const { t } = useTranslation();
 
   const { currentOrder, joinGroupOrder } = useGroupOrderStore();
 
@@ -22,16 +24,16 @@ export default function JoinGroupOrderPage() {
 
   const handleJoin = () => {
     if (!name.trim()) {
-      toast.error('Please enter your name');
+      toast.error(t('groupOrder.enterName'));
       return;
     }
 
     const success = joinGroupOrder(code.toUpperCase(), name.trim());
     if (success) {
-      toast.success('Joined the group order!');
+      toast.success(t('groupOrder.join.success'));
       router.push('/group-order');
     } else {
-      toast.error('Could not join. The order may have expired or the code is invalid.');
+      toast.error(t('groupOrder.join.failed'));
     }
   };
 
@@ -45,15 +47,15 @@ export default function JoinGroupOrderPage() {
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-yellow-100">
             <Coffee className="h-8 w-8 text-yellow-600" />
           </div>
-          <h1 className="text-xl font-bold">Already in a Group Order</h1>
+          <h1 className="text-xl font-bold">{t('groupOrder.join.alreadyIn')}</h1>
           <p className="mt-2 text-gray-500">
-            You&apos;re already part of a group order. Leave it first to join a new one.
+            {t('groupOrder.join.leaveFirst')}
           </p>
           <button
             onClick={() => router.push('/group-order')}
             className="mt-6 rounded-full bg-[#1A3C8B] px-8 py-3 font-medium text-white transition-colors hover:bg-[#2D5BB9]"
           >
-            Go to Current Order
+            {t('groupOrder.join.goToCurrent')}
           </button>
         </div>
       </div>
@@ -71,14 +73,14 @@ export default function JoinGroupOrderPage() {
           <Users className="h-8 w-8 text-[#1A3C8B]" />
         </div>
 
-        <h1 className="text-2xl font-bold">Join Group Order</h1>
+        <h1 className="text-2xl font-bold">{t('groupOrder.join.title')}</h1>
         <p className="mt-2 text-gray-500">
-          You&apos;ve been invited to join a group order
+          {t('groupOrder.join.invited')}
         </p>
 
         {/* Code display */}
         <div className="my-6 rounded-xl bg-gray-50 p-4">
-          <p className="text-sm text-gray-500">Order Code</p>
+          <p className="text-sm text-gray-500">{t('groupOrder.join.orderCode')}</p>
           <p className="text-2xl font-bold tracking-widest text-[#1A3C8B]">
             {code.toUpperCase()}
           </p>
@@ -89,7 +91,7 @@ export default function JoinGroupOrderPage() {
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Enter your name"
+          placeholder={t('groupOrder.join.enterName')}
           className="mb-4 w-full rounded-xl border border-gray-300 px-4 py-3 text-center focus:border-[#1A3C8B] focus:outline-none"
         />
 
@@ -97,11 +99,11 @@ export default function JoinGroupOrderPage() {
           onClick={handleJoin}
           className="w-full rounded-full bg-[#1A3C8B] py-3 font-medium text-white transition-colors hover:bg-[#2D5BB9]"
         >
-          Join Order
+          {t('groupOrder.join.joinBtn')}
         </button>
 
         <p className="mt-4 text-xs text-gray-400">
-          By joining, you&apos;ll be able to add items to the shared order
+          {t('groupOrder.join.byJoining')}
         </p>
       </motion.div>
     </div>

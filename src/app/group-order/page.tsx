@@ -9,6 +9,7 @@ import { useGroupOrderStore } from '@/lib/group-order-store';
 import ShareLink from '@/components/group-order/ShareLink';
 import ParticipantsList from '@/components/group-order/ParticipantsList';
 import Link from 'next/link';
+import { useTranslation } from '@/lib/i18n/LanguageContext';
 
 export default function GroupOrderPage() {
   const router = useRouter();
@@ -16,6 +17,7 @@ export default function GroupOrderPage() {
   const [joinCode, setJoinCode] = useState('');
   const [joinName, setJoinName] = useState('');
   const [mounted, setMounted] = useState(false);
+  const { t } = useTranslation();
 
   const {
     currentOrder,
@@ -33,33 +35,33 @@ export default function GroupOrderPage() {
 
   const handleCreateOrder = () => {
     if (!hostName.trim()) {
-      toast.error('Please enter your name');
+      toast.error(t('groupOrder.enterName'));
       return;
     }
     createGroupOrder(hostName.trim());
-    toast.success('Group order created! Share the code with friends.');
+    toast.success(t('groupOrder.created'));
   };
 
   const handleJoinOrder = () => {
     if (!joinCode.trim() || !joinName.trim()) {
-      toast.error('Please enter the code and your name');
+      toast.error(t('groupOrder.enterCodeName'));
       return;
     }
     const success = joinGroupOrder(joinCode.trim().toUpperCase(), joinName.trim());
     if (success) {
-      toast.success('Joined the group order!');
+      toast.success(t('groupOrder.joined'));
     } else {
-      toast.error('Invalid code or order not found');
+      toast.error(t('groupOrder.invalidCode'));
     }
   };
 
   const handleLockOrder = () => {
     lockOrder();
-    toast.success('Order locked! Ready for checkout.');
+    toast.success(t('groupOrder.locked'));
   };
 
   const handleCheckout = () => {
-    toast.success('Demo: Group order would be sent to checkout');
+    toast.success(t('groupOrder.checkoutDemo'));
     clearGroupOrder();
     router.push('/checkout');
   };
@@ -78,9 +80,9 @@ export default function GroupOrderPage() {
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#1A3C8B]/10">
             <Users className="h-8 w-8 text-[#1A3C8B]" />
           </div>
-          <h1 className="text-2xl font-bold">Group Order</h1>
+          <h1 className="text-2xl font-bold">{t('groupOrder.title')}</h1>
           <p className="mt-2 text-gray-500">
-            Order together with friends and split the bill
+            {t('groupOrder.subtitle')}
           </p>
         </motion.div>
 
@@ -91,22 +93,22 @@ export default function GroupOrderPage() {
             animate={{ opacity: 1, x: 0 }}
             className="rounded-2xl border-2 border-[#1A3C8B] bg-white p-6"
           >
-            <h2 className="mb-4 text-lg font-bold">Start a Group Order</h2>
+            <h2 className="mb-4 text-lg font-bold">{t('groupOrder.startTitle')}</h2>
             <p className="mb-4 text-sm text-gray-500">
-              Create a group order and invite friends to add their items
+              {t('groupOrder.startDesc')}
             </p>
             <input
               type="text"
               value={hostName}
               onChange={(e) => setHostName(e.target.value)}
-              placeholder="Your name"
+              placeholder={t('groupOrder.yourName')}
               className="mb-4 w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-[#1A3C8B] focus:outline-none"
             />
             <button
               onClick={handleCreateOrder}
               className="w-full rounded-full bg-[#1A3C8B] py-3 font-medium text-white transition-colors hover:bg-[#2D5BB9]"
             >
-              Create Group Order
+              {t('groupOrder.createBtn')}
             </button>
           </motion.div>
 
@@ -116,15 +118,15 @@ export default function GroupOrderPage() {
             animate={{ opacity: 1, x: 0 }}
             className="rounded-2xl border border-gray-200 bg-white p-6"
           >
-            <h2 className="mb-4 text-lg font-bold">Join a Group Order</h2>
+            <h2 className="mb-4 text-lg font-bold">{t('groupOrder.joinTitle')}</h2>
             <p className="mb-4 text-sm text-gray-500">
-              Enter the code shared by your friend to join their order
+              {t('groupOrder.joinDesc')}
             </p>
             <input
               type="text"
               value={joinCode}
               onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
-              placeholder="Enter 6-digit code"
+              placeholder={t('groupOrder.enterCode')}
               maxLength={6}
               className="mb-3 w-full rounded-xl border border-gray-300 px-4 py-3 text-center text-lg font-bold tracking-widest focus:border-[#1A3C8B] focus:outline-none"
             />
@@ -132,14 +134,14 @@ export default function GroupOrderPage() {
               type="text"
               value={joinName}
               onChange={(e) => setJoinName(e.target.value)}
-              placeholder="Your name"
+              placeholder={t('groupOrder.yourName')}
               className="mb-4 w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-[#1A3C8B] focus:outline-none"
             />
             <button
               onClick={handleJoinOrder}
               className="w-full rounded-full border-2 border-[#1A3C8B] py-3 font-medium text-[#1A3C8B] transition-colors hover:bg-[#1A3C8B]/5"
             >
-              Join Order
+              {t('groupOrder.joinBtn')}
             </button>
           </motion.div>
         </div>
@@ -147,8 +149,7 @@ export default function GroupOrderPage() {
         {/* Demo notice */}
         <div className="mt-8 rounded-xl bg-yellow-50 p-4 text-center">
           <p className="text-sm text-yellow-800">
-            <strong>Demo Mode:</strong> Group orders are stored locally. In production,
-            this would sync in real-time across devices.
+            <strong>{t('groupOrder.demoMode')}</strong> {t('groupOrder.demoNotice')}
           </p>
         </div>
       </div>
@@ -165,9 +166,9 @@ export default function GroupOrderPage() {
       >
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold">Group Order</h1>
+            <h1 className="text-2xl font-bold">{t('groupOrder.title')}</h1>
             <p className="text-sm text-gray-500">
-              {currentOrder.status === 'active' ? 'Add items to the order' : 'Order locked'}
+              {currentOrder.status === 'active' ? t('groupOrder.addItems') : t('groupOrder.orderLocked')}
             </p>
           </div>
           <div className={`rounded-full px-3 py-1 text-sm font-medium ${
@@ -175,7 +176,7 @@ export default function GroupOrderPage() {
               ? 'bg-green-100 text-green-700'
               : 'bg-gray-100 text-gray-700'
           }`}>
-            {currentOrder.status === 'active' ? 'Active' : 'Locked'}
+            {currentOrder.status === 'active' ? t('groupOrder.statusActive') : t('groupOrder.statusLocked')}
           </div>
         </div>
       </motion.div>
@@ -217,7 +218,7 @@ export default function GroupOrderPage() {
             className="flex w-full items-center justify-center gap-2 rounded-full bg-[#1A3C8B] py-3 font-medium text-white transition-colors hover:bg-[#2D5BB9]"
           >
             <Plus className="h-5 w-5" />
-            Add Items from Menu
+            {t('groupOrder.addFromMenu')}
           </Link>
         )}
 
@@ -227,7 +228,7 @@ export default function GroupOrderPage() {
             className="flex w-full items-center justify-center gap-2 rounded-full border-2 border-[#1A3C8B] py-3 font-medium text-[#1A3C8B] transition-colors hover:bg-[#1A3C8B]/5"
           >
             <Lock className="h-5 w-5" />
-            Lock Order & Checkout
+            {t('groupOrder.lockCheckout')}
           </button>
         )}
 
@@ -237,18 +238,18 @@ export default function GroupOrderPage() {
             className="flex w-full items-center justify-center gap-2 rounded-full bg-[#1A3C8B] py-3 font-medium text-white transition-colors hover:bg-[#2D5BB9]"
           >
             <ShoppingCart className="h-5 w-5" />
-            Proceed to Checkout
+            {t('groupOrder.proceedCheckout')}
           </button>
         )}
 
         <button
           onClick={() => {
             clearGroupOrder();
-            toast.success('Left the group order');
+            toast.success(t('groupOrder.left'));
           }}
           className="w-full py-2 text-center text-sm text-gray-500 hover:text-red-500"
         >
-          Leave Group Order
+          {t('groupOrder.leaveOrder')}
         </button>
       </motion.div>
     </div>

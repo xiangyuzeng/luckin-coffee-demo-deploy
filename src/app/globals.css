@@ -62,3 +62,13 @@
   50% { box-shadow: 0 0 0 12px rgba(26, 60, 139, 0); }
 }
 .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+
+@keyframes ai-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.4), 0 0 40px rgba(26, 60, 139, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(99, 102, 241, 0.6), 0 0 60px rgba(26, 60, 139, 0.3);
+  }
+}
+.animate-ai-glow { animation: ai-glow 2s ease-in-out infinite; }

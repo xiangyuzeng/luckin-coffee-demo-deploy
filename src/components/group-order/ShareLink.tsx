@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Copy, Check, MessageCircle, Share2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslation } from '@/lib/i18n/LanguageContext';
 
 interface ShareLinkProps {
   code: string;
@@ -10,6 +11,7 @@ interface ShareLinkProps {
 
 export default function ShareLink({ code }: ShareLinkProps) {
   const [copied, setCopied] = useState(false);
+  const { t } = useTranslation();
 
   const shareUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/group-order/join/${code}`;
 
@@ -17,20 +19,20 @@ export default function ShareLink({ code }: ShareLinkProps) {
     try {
       await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
-      toast.success('Link copied to clipboard!');
+      toast.success(t('groupOrder.linkCopied'));
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast.error('Failed to copy link');
+      toast.error(t('groupOrder.copyFailed'));
     }
   };
 
   const handleShare = async (platform: 'native' | 'imessage' | 'whatsapp') => {
-    const message = `Join my Luckin Coffee group order! Use code: ${code}`;
+    const message = t('groupOrder.shareMessage').replace('{code}', code);
 
     if (platform === 'native' && typeof navigator !== 'undefined' && 'share' in navigator) {
       try {
         await navigator.share({
-          title: 'Join my Luckin Coffee order',
+          title: t('groupOrder.title'),
           text: message,
           url: shareUrl,
         });
@@ -46,7 +48,7 @@ export default function ShareLink({ code }: ShareLinkProps) {
 
   return (
     <div className="rounded-xl bg-gray-50 p-4">
-      <h3 className="mb-3 text-sm font-medium text-gray-700">Share with friends</h3>
+      <h3 className="mb-3 text-sm font-medium text-gray-700">{t('groupOrder.shareTitle')}</h3>
 
       {/* Code display */}
       <div className="mb-4 flex items-center justify-center gap-2 rounded-xl bg-white p-4">
@@ -61,12 +63,12 @@ export default function ShareLink({ code }: ShareLinkProps) {
         {copied ? (
           <>
             <Check className="h-4 w-4 text-green-500" />
-            Copied!
+            {t('groupOrder.copied')}
           </>
         ) : (
           <>
             <Copy className="h-4 w-4" />
-            Copy invite link
+            {t('groupOrder.copyLink')}
           </>
         )}
       </button>
@@ -79,7 +81,7 @@ export default function ShareLink({ code }: ShareLinkProps) {
             className="flex flex-col items-center gap-1 rounded-xl bg-white p-3 text-gray-600 transition-colors hover:bg-gray-100"
           >
             <Share2 className="h-5 w-5" />
-            <span className="text-xs">Share</span>
+            <span className="text-xs">{t('groupOrder.share')}</span>
           </button>
         )}
         <button
