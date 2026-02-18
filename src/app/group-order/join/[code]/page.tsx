@@ -47,7 +47,7 @@ export default function JoinGroupOrderPage() {
           </div>
           <h1 className="text-xl font-bold">Already in a Group Order</h1>
           <p className="mt-2 text-gray-500">
-            You're already part of a group order. Leave it first to join a new one.
+            You&apos;re already part of a group order. Leave it first to join a new one.
           </p>
           <button
             onClick={() => router.push('/group-order')}
@@ -73,7 +73,7 @@ export default function JoinGroupOrderPage() {
 
         <h1 className="text-2xl font-bold">Join Group Order</h1>
         <p className="mt-2 text-gray-500">
-          You've been invited to join a group order
+          You&apos;ve been invited to join a group order
         </p>
 
         {/* Code display */}
@@ -101,7 +101,7 @@ export default function JoinGroupOrderPage() {
         </button>
 
         <p className="mt-4 text-xs text-gray-400">
-          By joining, you'll be able to add items to the shared order
+          By joining, you&apos;ll be able to add items to the shared order
         </p>
       </motion.div>
     </div>
