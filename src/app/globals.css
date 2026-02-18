@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 222 68% 32%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 30% 96%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 220 30% 96%;
+    --muted-foreground: 220 10% 46%;
+    --accent: 222 68% 32%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 20% 90%;
+    --input: 220 20% 90%;
+    --ring: 222 68% 32%;
+    --radius: 0.75rem;
+  }
+
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .luckin-gradient {
+    background: linear-gradient(135deg, #1A3C8B 0%, #2D5BB9 100%);
+  }
+  .luckin-card {
+    @apply rounded-2xl bg-white shadow-sm border border-gray-100;
+  }
+  .luckin-text-gradient {
+    background: linear-gradient(135deg, #1A3C8B 0%, #2D5BB9 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(26, 60, 139, 0.4); }
+  50% { box-shadow: 0 0 0 12px rgba(26, 60, 139, 0); }
+}
+.animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }

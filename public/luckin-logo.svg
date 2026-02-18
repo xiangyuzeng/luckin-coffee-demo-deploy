@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="white">
+  <g transform="translate(100,100)">
+    <!-- Deer body -->
+    <ellipse cx="0" cy="20" rx="28" ry="35" fill="white"/>
+    <!-- Deer head -->
+    <circle cx="0" cy="-25" r="18" fill="white"/>
+    <!-- Left antler -->
+    <path d="M-8,-42 L-15,-70 L-25,-60 M-15,-70 L-10,-80 M-15,-70 L-22,-78" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <!-- Right antler -->
+    <path d="M8,-42 L15,-70 L25,-60 M15,-70 L10,-80 M15,-70 L22,-78" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <!-- Eye left -->
+    <circle cx="-6" cy="-28" r="2" fill="#1A3C8B"/>
+    <!-- Eye right -->
+    <circle cx="6" cy="-28" r="2" fill="#1A3C8B"/>
+    <!-- Nose -->
+    <ellipse cx="0" cy="-18" rx="3" ry="2" fill="#1A3C8B"/>
+    <!-- Front legs -->
+    <line x1="-10" y1="50" x2="-15" y2="80" stroke="white" stroke-width="4" stroke-linecap="round"/>
+    <line x1="10" y1="50" x2="15" y2="80" stroke="white" stroke-width="4" stroke-linecap="round"/>
+    <!-- Tail -->
+    <path d="M18,10 Q35,0 30,-15" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+  </g>
+</svg>
