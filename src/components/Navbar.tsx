@@ -7,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { LogOut, Home, Coffee, ClipboardList, Award, User } from 'lucide-react';
+import { LogOut, Home, Coffee, ClipboardList, Award, User, Crown, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { signOut, useSession } from 'next-auth/react';
@@ -51,6 +51,28 @@ const Navbar = () => {
               {item.label}
             </Link>
           ))}
+          {/* Luckin Pass link */}
+          <Link
+            href="/subscription"
+            className={cn(
+              'flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium transition-colors hover:bg-white/10',
+              pathname === '/subscription' && 'bg-white/20'
+            )}
+          >
+            <Crown className="h-4 w-4 text-yellow-400" />
+            Pass
+          </Link>
+          {/* Group Order link */}
+          <Link
+            href="/group-order"
+            className={cn(
+              'flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium transition-colors hover:bg-white/10',
+              pathname.startsWith('/group-order') && 'bg-white/20'
+            )}
+          >
+            <Users className="h-4 w-4" />
+            Group
+          </Link>
         </div>
 
         {/* Right Side: Auth + Cart */}
@@ -78,6 +100,18 @@ const Navbar = () => {
                   <DropdownMenuItem asChild className="hover:cursor-pointer">
                     <Link className="w-full" href="/loyalty">
                       {t('nav.rewards')}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild className="hover:cursor-pointer">
+                    <Link className="flex w-full items-center gap-2" href="/subscription">
+                      <Crown className="h-3 w-3 text-yellow-500" />
+                      Luckin Pass
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild className="hover:cursor-pointer">
+                    <Link className="flex w-full items-center gap-2" href="/group-order">
+                      <Users className="h-3 w-3" />
+                      Group Order
                     </Link>
                   </DropdownMenuItem>
                   {session.user.role === 'ADMIN' && (
@@ -140,6 +174,17 @@ const Navbar = () => {
               </Link>
             );
           })}
+          {/* Group Order in mobile nav */}
+          <Link
+            href="/group-order"
+            className={cn(
+              'flex flex-col items-center gap-0.5 px-3 py-1 text-xs transition-colors',
+              pathname.startsWith('/group-order') ? 'text-[#1A3C8B]' : 'text-gray-400'
+            )}
+          >
+            <Users className={cn('h-5 w-5', pathname.startsWith('/group-order') && 'text-[#1A3C8B]')} />
+            <span>Group</span>
+          </Link>
         </div>
       </div>
     </>

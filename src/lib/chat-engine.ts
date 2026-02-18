@@ -9,6 +9,11 @@ export type ChatIntent =
   | 'COFFEE_FACT'
   | 'HOURS_LOCATION'
   | 'CUSTOMIZATION_HELP'
+  | 'NATURAL_ORDER'
+  | 'DIETARY_FILTER'
+  | 'MOOD_BASED'
+  | 'HELP_ME_CHOOSE'
+  | 'ALLERGY_CHECK'
   | 'UNKNOWN';
 
 export interface ChatMessage {
@@ -17,6 +22,8 @@ export interface ChatMessage {
   content: string;
   timestamp: Date;
   suggestions?: string[];
+  action?: 'START_QUIZ' | 'SHOW_RECOMMENDATIONS';
+  recommendations?: { name: string; reason: string }[];
 }
 
 export interface ChatContext {
@@ -24,6 +31,11 @@ export interface ChatContext {
   activeOrder?: { status: string; items: string[] } | null;
   loyaltyPoints?: number;
   locale: 'en' | 'zh';
+  quizAnswers?: {
+    temperature?: 'hot' | 'cold';
+    sweetness?: 'low' | 'medium' | 'high';
+    mood?: 'energy' | 'relax' | 'refresh' | 'indulge';
+  };
 }
 
 const INTENT_PATTERNS: Record<ChatIntent, RegExp[]> = {
@@ -35,10 +47,41 @@ const INTENT_PATTERNS: Record<ChatIntent, RegExp[]> = {
   COFFEE_FACT: [/fact|trivia|tell me.*about|fun|random|interesting|did you know/i, /趣闻|知识|有趣|你知道/],
   HOURS_LOCATION: [/hour|open|close|location|where|address|store/i, /营业|地址|在哪|门店/],
   CUSTOMIZATION_HELP: [/custom|milk|sugar|size|oat|almond|coconut|shots|espresso|how.*order/i, /定制|牛奶|糖|大小|燕麦|杏仁|椰/],
+  // New intents
+  NATURAL_ORDER: [
+    /i want.*(something|drink)|looking for|craving|in the mood for|give me/i,
+    /想要|想喝|来一杯/
+  ],
+  DIETARY_FILTER: [
+    /dairy.?free|vegan|lactose|gluten|allergy|allergic|without|no dairy/i,
+    /无乳|素食|过敏|不含/
+  ],
+  MOOD_BASED: [
+    /need.*(energy|wake|boost|focus)|want to.*(relax|chill|unwind)|feeling.*(tired|sleepy|stressed)/i,
+    /需要能量|想放松|提神|解压/
+  ],
+  HELP_ME_CHOOSE: [
+    /help.*choose|can't decide|not sure|what do you|quiz|surprise me|dealer'?s choice/i,
+    /帮我选|不知道|选择困难|推荐一个/
+  ],
+  ALLERGY_CHECK: [
+    /contain|have|allergen|nut|peanut|soy|gluten|dairy in|is there/i,
+    /含有|过敏原|坚果|大豆|麸质/
+  ],
   UNKNOWN: [],
 };
 
 export function detectIntent(message: string): ChatIntent {
+  // Check for natural language ordering patterns first (more specific)
+  const naturalPatterns = [
+    /something.*(cold|hot|icy|warm|sweet|not.*sweet|fruity|creamy|strong|light)/i,
+    /i('?m| am).*(hot|cold|tired|need)/i,
+    /(cold|hot|icy|sweet|fruity|creamy|strong).*(drink|something|coffee)/i,
+  ];
+  for (const pattern of naturalPatterns) {
+    if (pattern.test(message.trim())) return 'NATURAL_ORDER';
+  }
+
   for (const [intent, patterns] of Object.entries(INTENT_PATTERNS)) {
     if (intent === 'UNKNOWN') continue;
     for (const pattern of patterns) {
@@ -71,7 +114,18 @@ const COFFEE_FACTS = {
   ],
 };
 
-type ResponseFn = (ctx: ChatContext) => { content: string; suggestions: string[] };
+// Allergen database for drinks
+const DRINK_ALLERGENS: Record<string, string[]> = {
+  'latte': ['dairy'],
+  'cappuccino': ['dairy'],
+  'mocha': ['dairy', 'soy'],
+  'coconut': ['tree nuts'],
+  'almond': ['tree nuts'],
+  'caramel': ['dairy'],
+  'oat': ['gluten'],
+};
+
+type ResponseFn = (ctx: ChatContext) => { content: string; suggestions: string[]; action?: ChatMessage['action'] };
 
 const RESPONSES: Record<ChatIntent, Record<'en' | 'zh', ResponseFn>> = {
   GREETING: {
@@ -91,7 +145,7 @@ const RESPONSES: Record<ChatIntent, Record<'en' | 'zh', ResponseFn>> = {
       const drink = isHot ? 'our Coconut Cold Brew or Ruby Ocean Refresher' : 'a warm Coconut Latte or Velvet Latte';
       return {
         content: `Based on today's weather (${weather.temp}°C, ${weather.condition}), I'd suggest ${drink}! 🥤 Check out the AI Barista card on the homepage for a personalized pick just for you.`,
-        suggestions: ['Show me the menu', 'What\'s popular?', 'Any new items?'],
+        suggestions: ['Show me the menu', 'What\'s popular?', 'Help me choose'],
       };
     },
     zh: (ctx) => {
@@ -100,7 +154,7 @@ const RESPONSES: Record<ChatIntent, Record<'en' | 'zh', ResponseFn>> = {
       const drink = isHot ? '我们的椰子冷萃或红宝石海洋冰饮' : '温暖的椰子拿铁或丝绒拿铁';
       return {
         content: `根据今天的天气（${weather.temp}°C，${weather.condition}），我推荐${drink}！🥤 首页的AI咖啡师会为你推荐最适合的饮品哦。`,
-        suggestions: ['看看菜单', '什么最热门？', '有新品吗？'],
+        suggestions: ['看看菜单', '什么最热门？', '帮我选择'],
       };
     },
   },
@@ -214,19 +268,130 @@ const RESPONSES: Record<ChatIntent, Record<'en' | 'zh', ResponseFn>> = {
       suggestions: ['什么是燕麦奶？', '推荐饮品', '浏览菜单'],
     }),
   },
+  // New intent responses
+  NATURAL_ORDER: {
+    en: () => ({
+      content: "I can help you find the perfect drink! 🎯 Tell me more about what you're looking for:\n\n• Temperature: hot or cold?\n• Sweetness: sweet, not too sweet, or no sugar?\n• Flavor: fruity, creamy, chocolatey?\n\nOr just say something like \"something cold and not too sweet\" and I'll find matches!",
+      suggestions: ['Something cold & fruity', 'Hot & creamy', 'Help me choose'],
+    }),
+    zh: () => ({
+      content: '我可以帮你找到完美的饮品！🎯 告诉我更多你想要的：\n\n• 温度：热的还是冷的？\n• 甜度：甜、微甜还是无糖？\n• 口味：果味、奶香还是巧克力？\n\n或者直接说"来杯冰的不太甜的"，我来帮你匹配！',
+      suggestions: ['冰的果味', '热的奶香', '帮我选择'],
+    }),
+  },
+  DIETARY_FILTER: {
+    en: () => ({
+      content: "We've got you covered! 🌱\n\n🥛 Dairy-free options: Oat, Almond, or Coconut milk (+$0.70)\n🌿 Vegan-friendly: Most drinks can be made vegan with alt milk\n🚫 Sugar-free: Choose \"None\" for sugar level\n\nJust customize any drink to fit your needs! Our Refreshers are naturally dairy-free too.",
+      suggestions: ['Show dairy-free drinks', 'Vegan options', 'Browse menu'],
+    }),
+    zh: () => ({
+      content: '我们为你准备好了！🌱\n\n🥛 无乳选项：燕麦奶、杏仁奶或椰奶（+$0.70）\n🌿 纯素友好：大多数饮品可用植物奶制作\n🚫 无糖：选择"无糖"糖度\n\n任何饮品都可以根据你的需求定制！我们的清爽系列天然无乳。',
+      suggestions: ['无乳饮品', '纯素选项', '浏览菜单'],
+    }),
+  },
+  MOOD_BASED: {
+    en: () => {
+      const hour = new Date().getHours();
+      let suggestion = '';
+      if (hour < 12) {
+        suggestion = "For a morning energy boost, try our Cold Brew or Americano — high caffeine to kickstart your day! ⚡";
+      } else if (hour < 17) {
+        suggestion = "For an afternoon pick-me-up, our Coconut Latte or Velvet Latte are perfect — smooth energy without the jitters! 🌟";
+      } else {
+        suggestion = "For evening relaxation, try our Dreamy Latte or a Refresher (lower caffeine) — unwind without staying up all night! 🌙";
+      }
+      return {
+        content: suggestion,
+        suggestions: ['Need more energy', 'Want to relax', 'Something refreshing'],
+      };
+    },
+    zh: () => {
+      const hour = new Date().getHours();
+      let suggestion = '';
+      if (hour < 12) {
+        suggestion = '早晨提神，试试我们的冷萃或美式——高咖啡因开启活力一天！⚡';
+      } else if (hour < 17) {
+        suggestion = '下午提神，椰子拿铁或丝绒拿铁最合适——顺滑能量不心慌！🌟';
+      } else {
+        suggestion = '晚间放松，试试梦幻拿铁或清爽系列（低咖啡因）——放松不失眠！🌙';
+      }
+      return {
+        content: suggestion,
+        suggestions: ['需要能量', '想放松', '来点清爽的'],
+      };
+    },
+  },
+  HELP_ME_CHOOSE: {
+    en: () => ({
+      content: "Let's find your perfect drink! 🎯 I'll ask you 3 quick questions:\n\n**Question 1 of 3:**\nDo you want something **hot** or **cold**?",
+      suggestions: ['Hot ☕', 'Cold 🧊'],
+      action: 'START_QUIZ',
+    }),
+    zh: () => ({
+      content: '让我帮你找到完美饮品！🎯 我会问你3个简单问题：\n\n**问题 1/3：**\n你想要**热的**还是**冷的**？',
+      suggestions: ['热的 ☕', '冷的 🧊'],
+      action: 'START_QUIZ',
+    }),
+  },
+  ALLERGY_CHECK: {
+    en: () => ({
+      content: "I can help with allergen info! 🔍\n\n**Common allergens in our drinks:**\n• 🥛 Dairy: Lattes, Cappuccinos, Mochas (use alt milk to avoid)\n• 🥜 Tree nuts: Coconut & Almond milk options\n• 🌾 Gluten: Oat milk contains gluten\n\nAsk me about a specific drink and I'll check its ingredients!",
+      suggestions: ['Is Coconut Latte nut-free?', 'Dairy-free options', 'Browse menu'],
+    }),
+    zh: () => ({
+      content: '我可以帮你查过敏原信息！🔍\n\n**我们饮品中常见的过敏原：**\n• 🥛 乳制品：拿铁、卡布奇诺、摩卡（可用植物奶替代）\n• 🥜 坚果：椰奶和杏仁奶选项\n• 🌾 麸质：燕麦奶含麸质\n\n问我具体饮品，我来帮你查成分！',
+      suggestions: ['椰子拿铁有坚果吗？', '无乳选项', '浏览菜单'],
+    }),
+  },
   UNKNOWN: {
     en: () => ({
       content: "I'm not sure I understood that, but I'm here to help! ☕ I can help with menu questions, drink recommendations, order tracking, loyalty points, and fun coffee facts!",
-      suggestions: ['Recommend a drink', 'View menu', 'My points', 'Coffee fact'],
+      suggestions: ['Recommend a drink', 'View menu', 'Help me choose', 'Coffee fact'],
     }),
     zh: () => ({
       content: '我不太确定你的意思，但我很乐意帮忙！☕ 我可以帮你了解菜单、推荐饮品、查询订单、查看积分和分享咖啡趣闻！',
-      suggestions: ['推荐饮品', '查看菜单', '我的积分', '咖啡趣闻'],
+      suggestions: ['推荐饮品', '查看菜单', '帮我选择', '咖啡趣闻'],
     }),
   },
 };
 
-export function generateResponse(intent: ChatIntent, context: ChatContext): { content: string; suggestions: string[] } {
+export function generateResponse(intent: ChatIntent, context: ChatContext): { content: string; suggestions: string[]; action?: ChatMessage['action'] } {
   const handler = RESPONSES[intent]?.[context.locale] || RESPONSES.UNKNOWN[context.locale];
   return handler(context);
+}
+
+// Quiz flow helpers
+export function getQuizQuestion(step: number, locale: 'en' | 'zh'): { content: string; suggestions: string[] } {
+  const questions = {
+    en: [
+      {
+        content: "**Question 1 of 3:**\nDo you want something **hot** or **cold**?",
+        suggestions: ['Hot ☕', 'Cold 🧊'],
+      },
+      {
+        content: "**Question 2 of 3:**\nHow sweet do you like it?",
+        suggestions: ['Not sweet', 'A little sweet', 'Sweet!'],
+      },
+      {
+        content: "**Question 3 of 3:**\nWhat's your mood right now?",
+        suggestions: ['Need energy ⚡', 'Want to relax 🌙', 'Feeling refreshed 🌊', 'Treat myself 🍫'],
+      },
+    ],
+    zh: [
+      {
+        content: '**问题 1/3：**\n你想要**热的**还是**冷的**？',
+        suggestions: ['热的 ☕', '冷的 🧊'],
+      },
+      {
+        content: '**问题 2/3：**\n你喜欢多甜？',
+        suggestions: ['不甜', '微甜', '甜甜的！'],
+      },
+      {
+        content: '**问题 3/3：**\n你现在的心情是？',
+        suggestions: ['需要能量 ⚡', '想放松 🌙', '清爽一下 🌊', '犒劳自己 🍫'],
+      },
+    ],
+  };
+
+  return questions[locale][step] || questions[locale][0];
 }
