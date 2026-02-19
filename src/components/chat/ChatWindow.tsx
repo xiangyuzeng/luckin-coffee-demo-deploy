@@ -226,11 +226,11 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20, scale: 0.95 }}
+      initial={{ opacity: 0, y: -20, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: 20, scale: 0.95 }}
+      exit={{ opacity: 0, y: -20, scale: 0.95 }}
       transition={{ duration: 0.2 }}
-      className="fixed bottom-36 right-4 z-40 flex h-[28rem] w-[22rem] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl md:bottom-22"
+      className="fixed top-36 right-4 z-40 flex h-[28rem] w-[22rem] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl md:top-36"
     >
       {/* Enhanced Header */}
       <div className="relative flex items-center gap-3 px-4 py-3 text-white shadow-lg"

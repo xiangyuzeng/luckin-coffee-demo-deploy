@@ -24,15 +24,15 @@ export default function ChatBubble() {
         {isOpen && <ChatWindow onClose={() => setIsOpen(false)} />}
       </AnimatePresence>
 
-      <div className="fixed bottom-20 right-4 z-40 flex flex-col items-center md:bottom-6">
+      <div className="fixed top-20 right-4 z-40 flex flex-col items-center md:top-20">
         {/* Floating label */}
         {!isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-2 rounded-full bg-white px-3 py-1.5 shadow-lg"
+            className="mb-2 rounded-full bg-white px-4 py-2 shadow-lg"
           >
-            <span className="text-xs font-medium text-[#1A3C8B]">
+            <span className="text-sm font-semibold text-[#1A3C8B]">
               {locale === 'zh' ? t('chat.aiAssistant') : t('chat.aiBarista')}
             </span>
           </motion.div>
@@ -41,7 +41,7 @@ export default function ChatBubble() {
         {/* Main bubble */}
         <motion.button
           onClick={handleToggle}
-          className={`relative flex h-[72px] w-[72px] items-center justify-center rounded-full shadow-xl transition-all ${
+          className={`relative flex h-[88px] w-[88px] items-center justify-center rounded-full shadow-xl transition-all ${
             !isOpen ? 'animate-ai-glow' : ''
           }`}
           style={{
@@ -108,7 +108,7 @@ export default function ChatBubble() {
                 exit={{ scale: 0.5, opacity: 0 }}
                 className="relative z-10"
               >
-                <Bot className="h-8 w-8 text-white" />
+                <Bot className="h-10 w-10 text-white" />
               </motion.div>
             )}
           </AnimatePresence>

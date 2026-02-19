@@ -8,6 +8,7 @@ import QuickActions from '@/components/home/QuickActions';
 import ExploreSection from '@/components/home/ExploreSection';
 import HeroCarousel from '@/components/home/HeroCarousel';
 import QuickCategories from '@/components/home/QuickCategories';
+import EmoChannel from '@/components/home/EmoChannel';
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
       <CoffeeInsight />
       <WeatherWidget />
       <ActiveOrderBanner />
+      <EmoChannel />
       <AIBaristaCard />
       <QuickOrderCards />
       <QuickActions />

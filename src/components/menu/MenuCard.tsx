@@ -5,6 +5,7 @@ import { ExtendedMenu } from '@/types/menu';
 import { formatPrice } from '@/lib/utils';
 import { getQuickNutrition, getCaffeineLevel } from '@/lib/fake-data/nutrition';
 import { Flame, Zap } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n/LanguageContext';
 
 interface MenuCardProps {
   menu: ExtendedMenu;
@@ -13,6 +14,7 @@ interface MenuCardProps {
 }
 
 export default function MenuCard({ menu, onClick, index }: MenuCardProps) {
+  const { t } = useTranslation();
   const nutrition = getQuickNutrition(menu.name);
   const caffeineLevel = getCaffeineLevel(nutrition.caffeine);
 
@@ -49,7 +51,7 @@ export default function MenuCard({ menu, onClick, index }: MenuCardProps) {
                 <h3 className="font-medium leading-tight">{menu.name}</h3>
                 {menu.isSignature && (
                   <span className="ml-2 flex-shrink-0 rounded-full bg-[#FFD700]/20 px-2 py-0.5 text-xs font-medium text-yellow-700">
-                    Signature
+                    {t('menu.signature')}
                   </span>
                 )}
               </div>

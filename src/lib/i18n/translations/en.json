@@ -39,6 +39,7 @@
   "quickPick.title": "Quick Pick",
 
   "menu.title": "Menu",
+  "menu.all": "All",
   "menu.search": "Search drinks & food...",
   "menu.noItems": "No items found. Try a different search.",
   "menu.signature": "Signature",
@@ -287,5 +288,15 @@
   "chat.aiBarista": "AI Barista",
   "chat.aiAssistant": "AI助手",
   "chat.poweredByAI": "Powered by AI",
-  "chat.typing": "Typing..."
+  "chat.typing": "Typing...",
+
+  "emoChannel.title": "Mood Order",
+  "emoChannel.howFeeling": "How are you feeling today?",
+  "emoChannel.reset": "Reset",
+  "emoChannel.perfectFor": "Perfect for",
+  "emoChannel.noMatches": "No matches found. Try another mood!",
+  "emoChannel.mood.energized": "Energized",
+  "emoChannel.mood.relaxed": "Relaxed",
+  "emoChannel.mood.focused": "Focused",
+  "emoChannel.mood.treat": "Treat Me"
 }

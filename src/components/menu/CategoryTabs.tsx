@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useTranslation } from '@/lib/i18n/LanguageContext';
 
 interface Category {
   id: string;
@@ -14,6 +15,8 @@ interface CategoryTabsProps {
 }
 
 export default function CategoryTabs({ categories, selectedCategory, onSelect }: CategoryTabsProps) {
+  const { t } = useTranslation();
+
   return (
     <div className="flex gap-2 overflow-x-auto pb-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
       <button
@@ -24,7 +27,7 @@ export default function CategoryTabs({ categories, selectedCategory, onSelect }:
             : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
         }`}
       >
-        All
+        {t('menu.all')}
       </button>
       {categories.map((category) => (
         <button

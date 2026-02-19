@@ -39,6 +39,7 @@
   "quickPick.title": "快速选择",
 
   "menu.title": "菜单",
+  "menu.all": "全部",
   "menu.search": "搜索饮品和食品...",
   "menu.noItems": "未找到商品，请尝试其他搜索。",
   "menu.signature": "招牌",
@@ -287,5 +288,15 @@
   "chat.aiBarista": "AI咖啡师",
   "chat.aiAssistant": "AI助手",
   "chat.poweredByAI": "AI驱动",
-  "chat.typing": "输入中..."
+  "chat.typing": "输入中...",
+
+  "emoChannel.title": "心情点单",
+  "emoChannel.howFeeling": "今天心情如何？",
+  "emoChannel.reset": "重置",
+  "emoChannel.perfectFor": "最适合",
+  "emoChannel.noMatches": "没有找到匹配的饮品，试试其他心情！",
+  "emoChannel.mood.energized": "充能",
+  "emoChannel.mood.relaxed": "放松",
+  "emoChannel.mood.focused": "专注",
+  "emoChannel.mood.treat": "犒劳"
 }
